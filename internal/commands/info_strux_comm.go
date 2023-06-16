@@ -2,8 +2,14 @@ package commands
 
 import (
 	"fmt"
+	"github.com/BurntSushi/toml"
+	"os"
+	"path/filepath"
 	"reflect"
+	"strux/internal/config"
 	"strux/internal/db"
+	"strux/internal/filegen"
+	"strux/utils"
 )
 
 var fieldInfo = map[string]string{
@@ -12,23 +18,24 @@ var fieldInfo = map[string]string{
 }
 
 type InfoCommand struct {
-	Info   string `short:"i" long:"info" block:"1"`
-	Pkg    string `short:"p" long:"pkg"`
-	New    string `short:"n" long:"new"`
-	isInfo bool
-	isPkg  bool
-	isNew  bool
+	Info      string `short:"info" long:"info" block:"1"`
+	Path      string `short:"p" long:"path"`
+	Package   string `short:"pkg" long:"package"`
+	isInfo    bool
+	isPath    bool
+	isPackage bool
 }
 
 func (inf *InfoCommand) ExecInfo() []string {
 	inf.isInfo = true
-	inf.isPkg = false
-	inf.isNew = false
-	return []string{inf.Pkg}
+	inf.isPath = false
+	inf.isPackage = false
+	return []string{inf.Path, inf.Package}
 }
 
-func (inf *InfoCommand) ExecPkg() []string {
-	inf.isPkg = true
+// ExecPath shows struct_pkg path.
+func (inf *InfoCommand) ExecPath() []string {
+	inf.isPath = true
 	value, err := db.GetStruxPkgPathValue()
 	if err != nil {
 		panic(err)
@@ -37,20 +44,51 @@ func (inf *InfoCommand) ExecPkg() []string {
 	return []string{}
 }
 
-func (inf *InfoCommand) ExecNew() []string {
-	inf.isNew = true
-	fmt.Println("NEW")
+// ExecPackage shows information from the project.toml file for the selected package.
+func (inf *InfoCommand) ExecPackage(pkgName string) []string {
+	inf.isPackage = true
+	struxPkgPath, err := db.GetStruxPkgPathValue()
+	if err != nil {
+		panic(err)
+	}
+	pkgConfPath := filepath.Join(struxPkgPath, pkgName, config.ProjectConfName)
+	if utils.PathExist(pkgConfPath) {
+		var fd filegen.FileData
+		file, err := os.ReadFile(pkgConfPath)
+		if err != nil {
+			return nil
+		}
+		// get/set data
+		_, err = toml.Decode(string(file), &fd)
+		if err != nil {
+			return nil
+		}
+		inf.printInfoPkgValue(&fd)
+	} else {
+		fmt.Println(fmt.Sprintf("Package or project.toml for '%s' not found.", pkgName))
+	}
 	return []string{}
 }
 
 func (inf *InfoCommand) OnFinish() {
 	if inf.isInfo {
-		if !inf.isPkg && !inf.isNew {
+		if !inf.isPath && !inf.isPackage {
 			inf.getInfo()
 		}
 	}
 }
 
+// printInfoPkgValue prints in formatted form all package data from the configuration file.
+func (inf *InfoCommand) printInfoPkgValue(pkg *filegen.FileData) {
+	p := reflect.ValueOf(pkg)
+	for i := 0; i < p.Elem().Type().NumField(); i++ {
+		fieldName := p.Elem().Type().Field(i).Name
+		fieldValue := reflect.Indirect(p).Field(i).String()
+		fmt.Println(fmt.Sprintf("%s: %s", fieldName, fieldValue))
+	}
+}
+
+// getInfo displays information about all current commands.
 func (inf *InfoCommand) getInfo() {
 	f := reflect.ValueOf(inf).Elem()
 	for i := 0; i < f.NumField(); i++ {

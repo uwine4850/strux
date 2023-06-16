@@ -70,7 +70,7 @@ func (ec *ExecCommand) Exec(cNames []string) {
 						}
 					}
 					if notInSubCommands {
-						c := ec.checkSubCommandExist(ec.CommandCollection.Commands[cNames[cName]], acceptedCommand.CommandName)
+						c := ec.checkSubCommandExist(cNames, acceptedCommand.CommandName)
 						if !c {
 							panic(fmt.Sprintf("Subcommand %s not exist.", acceptedCommand.CommandName))
 						} else {
@@ -85,11 +85,14 @@ func (ec *ExecCommand) Exec(cNames []string) {
 
 // checkSubCommandExist compares a list of commands with one single command.
 // If the command is present (at least once) in the list, the method returns true.
-func (ec *ExecCommand) checkSubCommandExist(structComm []string, consoleComm string) bool {
-	for i := 0; i < len(structComm); i++ {
-		// One valid command equals the entire valid slice.
-		if structComm[i] == consoleComm {
-			return true
+func (ec *ExecCommand) checkSubCommandExist(cNames []string, consoleComm string) bool {
+	for iName := 0; iName < len(cNames); iName++ {
+		cc := ec.CommandCollection.Commands[cNames[iName]]
+		for i := 0; i < len(cc); i++ {
+			// One valid command equals the entire valid slice.
+			if cc[i] == consoleComm {
+				return true
+			}
 		}
 	}
 	return false

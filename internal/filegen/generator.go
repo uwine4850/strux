@@ -5,12 +5,14 @@ import (
 	"os"
 	"path/filepath"
 	"strux/internal/config"
+	"time"
 )
 
 type FileData struct {
 	PkgName     string
 	Version     string
 	Description string
+	InitDate    string
 }
 
 type TomlGenerator struct {
@@ -22,7 +24,11 @@ type TomlGenerator struct {
 
 // Generate creates a toml configuration file.
 func (tg *TomlGenerator) Generate() {
-	fileData := FileData{PkgName: tg.PkgName, Version: tg.Version, Description: tg.Description}
+	fileData := FileData{
+		PkgName:     tg.PkgName,
+		Version:     tg.Version,
+		InitDate:    time.Now().Format("02-01-2006"),
+		Description: tg.Description}
 	file, err := os.Create(filepath.Join(tg.PkgPath, config.ProjectConfName))
 	if err != nil {
 		panic(err)

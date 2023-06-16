@@ -35,6 +35,10 @@ func (b *Build) getCurrentCollection() CommandCollector {
 	for i := range b.commandCollection {
 		block = append(block, b.commandCollection[i].BlockCommand)
 	}
+	_, err := b.checkDuplicateBlockCommands(block)
+	if err != nil {
+		panic(err)
+	}
 	for collector := range b.commandCollection {
 		for i := 0; i < len(block); i++ {
 			structCommandBlockList := b.commandCollection[collector].Commands[block[i]]
@@ -48,4 +52,37 @@ func (b *Build) getCurrentCollection() CommandCollector {
 		}
 	}
 	panic(fmt.Sprintf("Block command %s not exist", b.ConsoleArgs[0].CommandName))
+}
+
+// checkDuplicateBlockCommands checks if there are duplicate blocking commands in the current command structures.
+func (b *Build) checkDuplicateBlockCommands(blockFieldsName []string) (string, error) {
+	var allBlockList []string
+	// get block commands
+	for collector := range b.commandCollection {
+		for i := 0; i < len(blockFieldsName); i++ {
+			structCommandBlockList := b.commandCollection[collector].Commands[blockFieldsName[i]]
+			for j := 0; j < len(structCommandBlockList); j++ {
+				allBlockList = append(allBlockList, structCommandBlockList[j])
+			}
+		}
+	}
+	// check for duplicate block command
+	for i := 0; i < len(allBlockList); i++ {
+		newAllBlockList := allBlockList[i+1:]
+		for j := range newAllBlockList {
+			if allBlockList[i] == newAllBlockList[j] {
+				mErr := ErrBlockCommandsDuplication{s: fmt.Sprintf("Block command %s duplicated.", allBlockList[i])}
+				return allBlockList[i], &mErr
+			}
+		}
+	}
+	return "", nil
+}
+
+type ErrBlockCommandsDuplication struct {
+	s string
+}
+
+func (e *ErrBlockCommandsDuplication) Error() string {
+	return e.s
 }
