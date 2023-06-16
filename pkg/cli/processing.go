@@ -23,7 +23,9 @@ func (ec *ExecCommand) SetCliCommand(cliCommands []AcceptedCommand) *ExecCommand
 
 // Start all commands
 func (ec *ExecCommand) Start() {
-	ec.validator.CheckCommandExist(&ec.CommandCollection, &ec.cliCommands)
+	if err := ec.validator.CheckCommandExist(&ec.CommandCollection, &ec.cliCommands); err != nil {
+		panic(err)
+	}
 	cNames := []string{
 		ec.getBlockCommand(),
 	}
@@ -50,7 +52,16 @@ func (ec *ExecCommand) Exec(cNames []string) {
 					ec.parseAcceptedCommandValues(&acceptedCommand, &callInput)
 					commandExecMethod := reflect.ValueOf(ec.Command).MethodByName(fmt.Sprint("Exec", cNames[cName]))
 
-					ec.validator.CheckLenMethod(&commandExecMethod, &acceptedCommand)
+					// if command method not exist
+					if !commandExecMethod.IsValid() {
+						err := &ErrCommandMethodNotExist{MethodName: fmt.Sprint("Exec", cNames[cName])}
+						panic(err)
+					}
+
+					if err := ec.validator.CheckLenMethod(&commandExecMethod, &acceptedCommand); err != nil {
+						panic(err)
+					}
+
 					val := commandExecMethod.Call(callInput)[0].Interface().([]string)
 					if reflect.DeepEqual(val, []string{}) {
 						break
@@ -72,7 +83,8 @@ func (ec *ExecCommand) Exec(cNames []string) {
 					if notInSubCommands {
 						c := ec.checkSubCommandExist(cNames, acceptedCommand.CommandName)
 						if !c {
-							panic(fmt.Sprintf("Subcommand %s not exist.", acceptedCommand.CommandName))
+							err := &ErrSubcommandNotInThisContext{CommandName: acceptedCommand.CommandName}
+							panic(err)
 						} else {
 							subCommands = append(subCommands, acceptedCommand.CommandName)
 						}
@@ -129,14 +141,18 @@ type AcceptedCommand struct {
 type ExecValidator struct {
 }
 
-func (ev ExecValidator) CheckLenMethod(method *reflect.Value, aCommand *AcceptedCommand) {
+func (ev ExecValidator) CheckLenMethod(method *reflect.Value, aCommand *AcceptedCommand) error {
 	if method.Type().NumIn() != len(aCommand.CommandValue) {
-		panic(fmt.Sprintf("Command \"%s\" accept only %s arguments, received %s",
-			aCommand.CommandName, strconv.Itoa(method.Type().NumIn()), strconv.Itoa(len(aCommand.CommandValue))))
+		return &ErrMethodLenArguments{
+			CommandName: aCommand.CommandName,
+			CurrentLen:  strconv.Itoa(method.Type().NumIn()),
+			ReceivedLen: strconv.Itoa(len(aCommand.CommandValue)),
+		}
 	}
+	return nil
 }
 
-func (ev ExecValidator) CheckCommandExist(commandCollection *CommandCollector, aCommands *[]AcceptedCommand) {
+func (ev ExecValidator) CheckCommandExist(commandCollection *CommandCollector, aCommands *[]AcceptedCommand) error {
 	var consoleCommands []string
 	for j := 0; j < len(*aCommands); j++ {
 		consoleCommands = append(consoleCommands, (*aCommands)[j].CommandName)
@@ -152,6 +168,7 @@ func (ev ExecValidator) CheckCommandExist(commandCollection *CommandCollector, a
 	}
 	if len(consoleCommands) > 0 {
 		notExistCommands := strings.Join(consoleCommands, ", ")
-		panic(fmt.Sprintf("Commands %s not exist", notExistCommands))
+		return &ErrCommandsNotExist{notExistCommands}
 	}
+	return nil
 }

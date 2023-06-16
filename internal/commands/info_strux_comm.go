@@ -65,7 +65,8 @@ func (inf *InfoCommand) ExecPackage(pkgName string) []string {
 		}
 		inf.printInfoPkgValue(&fd)
 	} else {
-		fmt.Println(fmt.Sprintf("Package or project.toml for '%s' not found.", pkgName))
+		err := ErrPkgOrConfigNotFound{PkgName: pkgName}
+		fmt.Println(err.Error())
 	}
 	return []string{}
 }

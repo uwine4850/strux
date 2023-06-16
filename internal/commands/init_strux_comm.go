@@ -22,6 +22,10 @@ type InitCommand struct {
 
 func (ic *InitCommand) ExecInit(path string) []string {
 	ic.Path = path
+	if !utils.PathExist(path) {
+		err := &utils.ErrPathNotExist{Path: ic.Path}
+		panic(err)
+	}
 	return []string{ic.New, ic.Database}
 }
 
@@ -87,10 +91,8 @@ func (ic *InitCommand) acceptedPath() {
 				fmt.Println("Initialization was successful!")
 			} else {
 				// Column entry strux_pkg_path found
-				fmt.Println(fmt.Sprintf("The database already contains the path %s.", struxPkgPath))
-				fmt.Println("To change an entry in the database, run the command -i enter/path/ -n to create a new " +
-					"directory at the selected path and update the value in the database.")
-				fmt.Println("Or run -i enter/path/to/strux_pkg(!) -n to upgrade only the database.")
+				err := ErrDbStruxPkgPathAlreadyExist{PkgPath: struxPkgPath}
+				fmt.Println(err.Error())
 			}
 		}
 	})
@@ -112,29 +114,27 @@ func (ic *InitCommand) updateStructPkgDb() {
 				}
 				fmt.Println(fmt.Sprintf("The path %s installed in the database.", ic.Path))
 			} else {
-				fmt.Println(ic.Path, "not exist")
+				err := ErrCurrentStruxPkgPathNotExist{PkgPath: ic.Path}
+				fmt.Println(err.Error())
 			}
 		} else {
-			fmt.Println("The path must lead to the strux_pkg directory.")
+			err := ErrPathMustLeadToStruxPkg{Path: ic.Path}
+			fmt.Println(err.Error())
 		}
 	}
 }
 
 // createStruxPkgFolder creates a directory strux_pkg at the specified path.
 func (ic *InitCommand) createStruxPkgFolder(onCreate func()) {
-	if !utils.PathExist(ic.Path) {
-		fmt.Println(ic.Path, "not exist")
+	dirpath := filepath.Join(ic.Path, config.StruxPkgName)
+	if utils.PathExist(dirpath) {
+		err := utils.ErrPathAlreadyExist{Path: dirpath}
+		fmt.Println(err.Error())
 	} else {
-		dirpath := filepath.Join(ic.Path, config.StruxPkgName)
-		if utils.PathExist(dirpath) {
-			info := fmt.Sprintf("Path %s already exists.", dirpath)
-			fmt.Println(info)
+		if err := os.Mkdir(dirpath, os.ModePerm); err != nil {
+			panic(err)
 		} else {
-			if err := os.Mkdir(dirpath, os.ModePerm); err != nil {
-				panic(err)
-			} else {
-				onCreate()
-			}
+			onCreate()
 		}
 	}
 }

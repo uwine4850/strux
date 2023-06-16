@@ -51,7 +51,8 @@ func (b *Build) getCurrentCollection() CommandCollector {
 			}
 		}
 	}
-	panic(fmt.Sprintf("Block command %s not exist", b.ConsoleArgs[0].CommandName))
+	err = &ErrBlockCommandNotExist{CommandName: b.ConsoleArgs[0].CommandName}
+	panic(err.Error())
 }
 
 // checkDuplicateBlockCommands checks if there are duplicate blocking commands in the current command structures.
@@ -77,12 +78,4 @@ func (b *Build) checkDuplicateBlockCommands(blockFieldsName []string) (string, e
 		}
 	}
 	return "", nil
-}
-
-type ErrBlockCommandsDuplication struct {
-	s string
-}
-
-func (e *ErrBlockCommandsDuplication) Error() string {
-	return e.s
 }

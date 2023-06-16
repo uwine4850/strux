@@ -23,12 +23,14 @@ type CreateCommand struct {
 func (cc *CreateCommand) ExecCreate(name string) []string {
 	struxPkgPath, err := db.GetStruxPkgPathValue()
 	if err != nil {
-		fmt.Println("Please, run command --init path/to/strux/pkg")
+		errExistPath := ErrDbStruxPkgPathNotExist{RunCommand: "--init path/to/strux/pkg"}
+		fmt.Println(errExistPath.Error())
 		panic(err)
 	}
 	if struxPkgPath != "" && utils.PathExist(struxPkgPath) {
 		if utils.PathExist(filepath.Join(struxPkgPath, name)) {
-			fmt.Println(fmt.Sprintf("Package %s already exist.", name))
+			errPkgAlreadyExist := ErrPackageAlreadyExist{PkgName: name}
+			fmt.Println(errPkgAlreadyExist.Error())
 			return []string{}
 		}
 		if err := os.Mkdir(filepath.Join(struxPkgPath, name), os.ModePerm); err != nil {
@@ -44,8 +46,8 @@ func (cc *CreateCommand) ExecCreate(name string) []string {
 			fmt.Println(fmt.Sprintf("Package %s created successfully.", name))
 		}
 	} else {
-		fmt.Println(fmt.Sprintf("Struct pkg path '%s' not exist.", struxPkgPath))
-		fmt.Println("Create directories manually or run command")
+		err := ErrCurrentStruxPkgPathNotExist{PkgPath: struxPkgPath}
+		fmt.Println(err.Error())
 	}
 	return []string{}
 }

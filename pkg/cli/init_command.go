@@ -49,7 +49,8 @@ func (mc *InitCommand) Init() CommandCollector {
 		d.ParentStructCommand = mc.Command
 		return cc
 	} else {
-		panic(fmt.Sprintf("The tag block:\"1\" is missing from the %s", reflect.TypeOf(mc.Command).Elem().Name()))
+		err := &ErrMissingBlockCommand{CommandStructName: reflect.TypeOf(mc.Command).Elem().Name()}
+		panic(err)
 	}
 }
 
@@ -88,7 +89,8 @@ func (mc *InitCommand) collect(field *reflect.StructField, cc *CommandCollector)
 // getShortCommand Returns the tag whose name is equal to "short".
 func (mc *InitCommand) getShortCommand(field *reflect.StructField) string {
 	if _, ok := field.Tag.Lookup("short"); !ok {
-		panic(fmt.Sprintf("The \"%s\" command does not have a short tag", field.Name))
+		err := &ErrShortTagNotExist{CommandName: field.Name}
+		panic(err)
 	}
 	return fmt.Sprint("-", strings.Trim(field.Tag.Get("short"), " "))
 }
@@ -96,7 +98,8 @@ func (mc *InitCommand) getShortCommand(field *reflect.StructField) string {
 // getLongCommand Returns the tag whose name is equal to "short".
 func (mc *InitCommand) getLongCommand(field *reflect.StructField) string {
 	if _, ok := field.Tag.Lookup("long"); !ok {
-		panic(fmt.Sprintf("The \"%s\" command does not have a long tag", field.Name))
+		err := &ErrLongTagNotExist{CommandName: field.Name}
+		panic(err)
 	}
 	return fmt.Sprint("--", strings.Trim(field.Tag.Get("long"), " "))
 }
@@ -109,5 +112,6 @@ func (mc *InitCommand) getBlockCommand(field *reflect.StructField) string {
 	} else if val == 1 {
 		return strings.Trim(field.Name, " ")
 	}
-	panic("Error get block command")
+	err := &ErrGettingBlockCommand{CommandName: field.Name}
+	panic(err)
 }
