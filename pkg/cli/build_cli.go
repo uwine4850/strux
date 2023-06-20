@@ -1,6 +1,10 @@
 package cli
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+	"strux/utils"
+)
 
 type Build struct {
 	Commands          *[]CommandInterface
@@ -39,13 +43,20 @@ func (b *Build) getCurrentCollection() CommandCollector {
 	if err != nil {
 		panic(err)
 	}
+	var acceptedStructCommand []string
 	for collector := range b.commandCollection {
 		for i := 0; i < len(block); i++ {
+			name := reflect.ValueOf(b.commandCollection[collector].ParentStructCommand).Elem().Type().Name()
 			structCommandBlockList := b.commandCollection[collector].Commands[block[i]]
-			if len(structCommandBlockList) != 0 {
-				for iC := range structCommandBlockList {
-					if structCommandBlockList[iC] == b.ConsoleArgs[0].CommandName {
-						return b.commandCollection[collector]
+
+			// if slice not empty and team names are not in the command list
+			if len(structCommandBlockList) != 0 && !utils.ElemInSlice[string](name, acceptedStructCommand) {
+				acceptedStructCommand = append(acceptedStructCommand, name)
+				if len(structCommandBlockList) != 0 {
+					for iC := range structCommandBlockList {
+						if structCommandBlockList[iC] == b.ConsoleArgs[0].CommandName {
+							return b.commandCollection[collector]
+						}
 					}
 				}
 			}
@@ -58,15 +69,23 @@ func (b *Build) getCurrentCollection() CommandCollector {
 // checkDuplicateBlockCommands checks if there are duplicate blocking commands in the current command structures.
 func (b *Build) checkDuplicateBlockCommands(blockFieldsName []string) (string, error) {
 	var allBlockList []string
+	var acceptedStructCommand []string
 	// get block commands
 	for collector := range b.commandCollection {
 		for i := 0; i < len(blockFieldsName); i++ {
 			structCommandBlockList := b.commandCollection[collector].Commands[blockFieldsName[i]]
-			for j := 0; j < len(structCommandBlockList); j++ {
-				allBlockList = append(allBlockList, structCommandBlockList[j])
+			structCommandName := reflect.ValueOf(b.commandCollection[collector].ParentStructCommand).Elem().Type().Name()
+
+			// if slice not empty and team names are not in the command list
+			if len(structCommandBlockList) != 0 && !utils.ElemInSlice[string](structCommandName, acceptedStructCommand) {
+				acceptedStructCommand = append(acceptedStructCommand, structCommandName)
+				for j := 0; j < len(structCommandBlockList); j++ {
+					allBlockList = append(allBlockList, structCommandBlockList[j])
+				}
 			}
 		}
 	}
+
 	// check for duplicate block command
 	for i := 0; i < len(allBlockList); i++ {
 		newAllBlockList := allBlockList[i+1:]

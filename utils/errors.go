@@ -17,3 +17,19 @@ type ErrPathAlreadyExist struct {
 func (e *ErrPathAlreadyExist) Error() string {
 	return fmt.Sprintf("Path %s already exist.", e.Path)
 }
+
+type ErrThisIsNotADir struct {
+	DirPath string
+}
+
+func (e *ErrThisIsNotADir) Error() string {
+	return fmt.Sprintf("The path %s does not lead to a directory.", e.DirPath)
+}
+
+type ErrDirNotCreated struct {
+	DirPath string
+}
+
+func (e *ErrDirNotCreated) Error() string {
+	return fmt.Sprintf("The %s not created.", e.DirPath)
+}

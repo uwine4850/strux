@@ -15,6 +15,7 @@ func main() {
 			&commands.CreateCommand{},
 			&commands.InitCommand{},
 			&commands.InfoCommand{},
+			&commands.PkgManagerCommand{},
 		},
 		ConsoleArgs: parser.Parse(),
 	}
