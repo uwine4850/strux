@@ -1,18 +1,30 @@
 package commands
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
+	"github.com/BurntSushi/toml"
+	"github.com/uwine4850/strux_api/pkg/uplutils"
+	"github.com/uwine4850/strux_api/services/protofiles/baseproto"
+	"golang.org/x/crypto/ssh/terminal"
 	"os"
 	"path/filepath"
 	"strings"
+	"strux/internal/apiutils"
+	"strux/internal/config"
 	"strux/internal/db"
+	"strux/internal/filegen"
 	"strux/utils"
+	"syscall"
 )
 
 type PkgManagerCommand struct {
 	Package   string `short:"pkg" long:"package" block:"1"`
 	AddDir    string `short:"ad" long:"adddir"`
 	Rewrite   string `short:"rw" long:"rewrite"`
+	Upload    string `short:"upl" long:"upload"`
+	isUpload  bool
 	isAddDir  bool
 	isRewrite bool
 	pkgName   string
@@ -33,7 +45,12 @@ func (p *PkgManagerCommand) ExecPackage(pkgName string) []string {
 		err := &ErrPkgOrConfigNotFound{PkgName: pkgName}
 		fmt.Println(err.Error())
 	}
-	return []string{p.AddDir}
+	return []string{p.AddDir, p.Upload}
+}
+
+func (p *PkgManagerCommand) ExecUpload() []string {
+	p.isUpload = true
+	return []string{}
 }
 
 func (p *PkgManagerCommand) ExecAddDir(addPath string) []string {
@@ -50,6 +67,42 @@ func (p *PkgManagerCommand) ExecAddDir(addPath string) []string {
 func (p *PkgManagerCommand) ExecRewrite() []string {
 	p.isRewrite = true
 	return []string{}
+}
+
+// uploadPackage Uploads the packet to the server.
+// You must confirm the login and password for the operation to be successful. Accordingly, you must have a registered account.
+func (p *PkgManagerCommand) uploadPackage(username string, password string, version string) (*baseproto.BaseResponse, error) {
+	pkgName := filepath.Base(p.pkgPath)
+	dirInfo, err := uplutils.GetDirsInfo(p.pkgPath, pkgName)
+	if err != nil {
+		return nil, err
+	}
+	// dir info to json
+	var dirInfoJson []byte
+	err = uplutils.UploadDirInfoToJson(dirInfo, &dirInfoJson)
+	if err != nil {
+		return nil, err
+	}
+
+	s, _ := filepath.Split(p.pkgPath)
+	pkgUplPath := s[:len(s)-1]
+	uplDirInfoFromPaths, err := uplutils.CreateUploadFilePaths(dirInfo, pkgUplPath)
+	if err != nil {
+		return nil, err
+	}
+	uploadFilesMap := uplutils.UplFilesToMap(uplDirInfoFromPaths)
+	api := apiutils.NewApiForm{
+		Method: "POST",
+		Url:    "http://localhost:3000/upload-pkg/",
+		TextValues: map[string]string{"username": username, "password": password, "version": version,
+			"files_info": string(dirInfoJson)},
+		FileValues: uploadFilesMap,
+	}
+	baseResponse, _, err := api.SendForm()
+	if err != nil {
+		return nil, err
+	}
+	return baseResponse, nil
 }
 
 // addDir creates directories and their files in the selected package.
@@ -70,7 +123,7 @@ func (p *PkgManagerCommand) addDir() {
 	var mkDir string
 	var files []string
 	for _, m := range dirList {
-		for s, _ := range m {
+		for s := range m {
 			switch s {
 			// make files this
 			case "mkPath":
@@ -123,10 +176,10 @@ func (p *PkgManagerCommand) addDir() {
 // setAddDirList sets a specially formatted list of files and paths to the corresponding directories.
 func (p *PkgManagerCommand) setAddDirList(mkPath string, sourcePath string, dirList *[]map[string][]string) {
 	m := map[string][]string{
-		"mkPath":     []string{mkPath},
-		"sourcePath": []string{sourcePath},
-		"mkDir":      []string{},
-		"files":      []string{},
+		"mkPath":     {mkPath},
+		"sourcePath": {sourcePath},
+		"mkDir":      {},
+		"files":      {},
 	}
 	dirFiles, err := os.ReadDir(sourcePath)
 	if err != nil {
@@ -166,4 +219,50 @@ func (p *PkgManagerCommand) OnFinish() {
 	if p.isAddDir {
 		p.addDir()
 	}
+	if p.isUpload {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter username: ")
+		username, err := reader.ReadString('\n')
+		if err != nil {
+			panic(err)
+		}
+		fmt.Print("Enter password(hidden): ")
+		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+		fmt.Println("\n")
+		if err != nil {
+			panic(err)
+		}
+		version, err := getPackageInfoVersion(p.pkgName)
+		if err != nil {
+			panic(err)
+		}
+		uploadResponse, err := p.uploadPackage(strings.TrimSpace(username), strings.TrimSpace(string(bytePassword)), version)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(uploadResponse.Message)
+	}
+}
+
+// getPackageInfoVersion read the project.toml file and return the current version.
+func getPackageInfoVersion(pkgName string) (string, error) {
+	pathPkg, err := db.GetStruxPkgPathValue()
+	if err != nil {
+		return "", err
+	}
+	projectTomlPath := filepath.Join(pathPkg, pkgName, config.ProjectConfName)
+	if utils.PathExist(projectTomlPath) {
+		var fd filegen.FileData
+		file, err := os.ReadFile(projectTomlPath)
+		if err != nil {
+			return "", err
+		}
+		// get/set data
+		_, err = toml.Decode(string(file), &fd)
+		if err != nil {
+			return "", err
+		}
+		return fd.Version, nil
+	}
+	return "", errors.New(fmt.Sprintf("Path %s from project.toml not exist", projectTomlPath))
 }
