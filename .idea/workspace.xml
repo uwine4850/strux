@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Bug fix. Add packet manager commands">
-      <change afterPath="$PROJECT_DIR$/internal/apiutils/form.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/strux.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Upload package.">
+      <change afterPath="$PROJECT_DIR$/internal/commands/user_comm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/strux/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/strux/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/commands/pkg_manager_comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/pkg_manager_comm.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -37,23 +31,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/uwine/Documents/GolandProjects/strux_api&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "last_opened_file_path": "/home/uwine/Documents/GolandProjects/strux",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -86,7 +80,7 @@
     <configuration name="go build strux/cmd/strux" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="strux" />
       <working_directory value="$PROJECT_DIR$" />
-      <parameters value="-pkg tee -upl" />
+      <parameters value="-usr -reg" />
       <kind value="PACKAGE" />
       <package value="strux/cmd/strux" />
       <directory value="$PROJECT_DIR$" />
@@ -114,7 +108,8 @@
     <MESSAGE value="Bugs fixed. Updated command to display information about a package" />
     <MESSAGE value="Error handling update" />
     <MESSAGE value="Bug fix. Add packet manager commands" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fix. Add packet manager commands" />
+    <MESSAGE value="Upload package." />
+    <option name="LAST_COMMIT_MESSAGE" value="Upload package." />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

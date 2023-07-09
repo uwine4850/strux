@@ -228,10 +228,10 @@ func (p *PkgManagerCommand) OnFinish() {
 		}
 		fmt.Print("Enter password(hidden): ")
 		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-		fmt.Println("\n")
 		if err != nil {
 			panic(err)
 		}
+		fmt.Print("\n")
 		version, err := getPackageInfoVersion(p.pkgName)
 		if err != nil {
 			panic(err)
