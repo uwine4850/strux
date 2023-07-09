@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Upload package.">
-      <change afterPath="$PROJECT_DIR$/internal/commands/user_comm.go" afterDir="false" />
+    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Added a function to create a new user.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/strux/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/strux/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/commands/pkg_manager_comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/pkg_manager_comm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commands/user_comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/user_comm.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +78,7 @@
     <configuration name="go build strux/cmd/strux" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="strux" />
       <working_directory value="$PROJECT_DIR$" />
-      <parameters value="-usr -reg" />
+      <parameters value="-usr -upd-pass" />
       <kind value="PACKAGE" />
       <package value="strux/cmd/strux" />
       <directory value="$PROJECT_DIR$" />
@@ -109,7 +107,8 @@
     <MESSAGE value="Error handling update" />
     <MESSAGE value="Bug fix. Add packet manager commands" />
     <MESSAGE value="Upload package." />
-    <option name="LAST_COMMIT_MESSAGE" value="Upload package." />
+    <MESSAGE value="Added a function to create a new user." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a function to create a new user." />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
