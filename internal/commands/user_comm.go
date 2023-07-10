@@ -15,12 +15,19 @@ type UserCommands struct {
 	User             string `short:"usr" long:"user" block:"1"`
 	Register         string `short:"reg" long:"register"`
 	UpdatePassword   string `short:"upd-pass" long:"update-password"`
+	Delete           string `short:"del" long:"delete"`
 	isRegister       bool
 	isUpdatePassword bool
+	isDelete         bool
 }
 
 func (uc *UserCommands) ExecUser() []string {
-	return []string{uc.Register, uc.UpdatePassword}
+	return []string{uc.Register, uc.UpdatePassword, uc.Delete}
+}
+
+func (uc *UserCommands) ExecDelete() []string {
+	uc.isDelete = true
+	return []string{}
 }
 
 func (uc *UserCommands) ExecUpdatePassword() []string {
@@ -44,6 +51,7 @@ func (uc *UserCommands) OnFinish() {
 			panic(err)
 		}
 		fmt.Println(response.Message)
+		return
 	}
 	if uc.isUpdatePassword {
 		response, err := updatePassword()
@@ -55,11 +63,54 @@ func (uc *UserCommands) OnFinish() {
 			panic(err)
 		}
 		fmt.Println(response.Message)
+		return
+	}
+	if uc.isDelete {
+		response, err := deleteUser()
+		if !response.Success {
+			fmt.Println(response.Message)
+			return
+		}
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(response.Message)
+		return
 	}
 }
 
+func deleteUser() (*baseproto.BaseResponse, error) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("⚠️ Warning! Deleting a user will result in the deletion of all packages belonging to that user.")
+	fmt.Print("Enter username: ")
+	username, err := reader.ReadString('\n')
+	if err != nil {
+		return nil, err
+	}
+	fmt.Print("Enter password(hidden): ")
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return nil, err
+	}
+	fmt.Print("\n")
+	apiForm := &apiutils.NewApiForm{
+		Method: "DELETE",
+		Url:    "http://localhost:3000/user-delete/",
+		TextValues: map[string]string{
+			"username": strings.TrimSpace(string(username)),
+			"password": strings.TrimSpace(string(bytePassword)),
+		},
+		FileValues: nil,
+	}
+	baseResponse, _, err := apiForm.SendForm()
+	if err != nil {
+		return nil, err
+	}
+	return baseResponse, err
+}
+
 // updatePassword Updating the user's password.
-// You must enter the user name correctly to update it. Then enter the new password twice.
+// You must enter the username correctly to update it. Then enter the new password twice.
 func updatePassword() (*baseproto.BaseResponse, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter username: ")
