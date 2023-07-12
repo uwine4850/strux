@@ -2,13 +2,16 @@ package commands
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/uwine4850/strux_api/pkg/uplutils"
 	"github.com/uwine4850/strux_api/services/protofiles/baseproto"
+	"github.com/uwine4850/strux_api/services/protofiles/pkgproto"
 	"golang.org/x/crypto/ssh/terminal"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 	"strux/internal/apiutils"
@@ -20,16 +23,21 @@ import (
 )
 
 type PkgManagerCommand struct {
-	Package   string `short:"pkg" long:"package" block:"1"`
-	AddDir    string `short:"ad" long:"adddir"`
-	Rewrite   string `short:"rw" long:"rewrite"`
-	Upload    string `short:"upl" long:"upload"`
-	isUpload  bool
-	isAddDir  bool
-	isRewrite bool
-	pkgName   string
-	pkgPath   string
-	addPath   string
+	Package    string `short:"pkg" long:"package" block:"1"`
+	AddDir     string `short:"ad" long:"add-dir"`
+	Rewrite    string `short:"rw" long:"rewrite"`
+	Upload     string `short:"upl" long:"upload"`
+	Download   string `short:"dwn" long:"download"`
+	isUpload   bool
+	isAddDir   bool
+	isRewrite  bool
+	isDownload bool
+	pkgName    string
+	pkgPath    string
+	addPath    string
+
+	downloadUser    string
+	downloadVersion string
 }
 
 func (p *PkgManagerCommand) ExecPackage(pkgName string) []string {
@@ -45,7 +53,14 @@ func (p *PkgManagerCommand) ExecPackage(pkgName string) []string {
 		err := &ErrPkgOrConfigNotFound{PkgName: pkgName}
 		fmt.Println(err.Error())
 	}
-	return []string{p.AddDir, p.Upload}
+	return []string{p.AddDir, p.Upload, p.Download}
+}
+
+func (p *PkgManagerCommand) ExecDownload(user string, version string) []string {
+	p.isDownload = true
+	p.downloadUser = user
+	p.downloadVersion = version
+	return []string{}
 }
 
 func (p *PkgManagerCommand) ExecUpload() []string {
@@ -241,7 +256,83 @@ func (p *PkgManagerCommand) OnFinish() {
 			panic(err)
 		}
 		fmt.Println(uploadResponse.Message)
+		return
 	}
+	if p.isDownload {
+		err := downloadPackage(p.pkgName, p.downloadVersion, p.downloadUser)
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
+}
+
+// downloadPackage Downloads a packet from the server.
+// If the package name, version and user are correct, creates the required directory structure and writes the package files there.
+func downloadPackage(pkgName string, version string, packageUserOwner string) error {
+	downloadPath, err := getDownloadFolderPath(pkgName, version, packageUserOwner)
+	if err != nil {
+		return err
+	}
+	api := apiutils.NewApiForm{
+		Method:     "GET",
+		Url:        "http://localhost:3000/download-package/",
+		TextValues: map[string]string{"username": packageUserOwner, "pkgName": pkgName, "version": version},
+		FileValues: nil,
+	}
+	baseResponse, form, err := api.SendForm()
+	if err != nil {
+		panic(err)
+	}
+	if baseResponse != nil {
+		fmt.Println(baseResponse.Message)
+		return nil
+	}
+	uplDirInfo, err := filesInfoToUploadDirInfo(form.Value["files_info"][0])
+	if err != nil {
+		panic(err)
+	}
+	dirTreeMap := make(map[string][]string)
+	err = uplutils.CreateDirTree(downloadPath, uplDirInfo, &dirTreeMap)
+	if err != nil {
+		panic(err)
+	}
+	var uplFiles []*pkgproto.UploadFile
+	err = uplutils.SetUploadFiles(form.File, &uplFiles)
+	if err != nil {
+		panic(err)
+	}
+	err = uplutils.CreateFiles(downloadPath, &uplFiles, dirTreeMap)
+	if err != nil {
+		panic(err)
+	}
+	return nil
+}
+
+// getDownloadFolderPath Creates a folder for downloading the selected package. And returns the path to it.
+func getDownloadFolderPath(pkgName string, version string, packageUserOwner string) (string, error) {
+	currentUser, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	downloadFolder := filepath.Join(currentUser.HomeDir, "StruxDownloads", packageUserOwner, pkgName, version)
+	if !utils.PathExist(downloadFolder) {
+		err := os.MkdirAll(downloadFolder, os.ModePerm)
+		if err != nil {
+			return "", err
+		}
+	}
+	return downloadFolder, nil
+}
+
+// filesInfoToUploadDirInfo converts json in string format to a pkgproto.UploadDirInfo structure.
+func filesInfoToUploadDirInfo(filesInfo string) (*pkgproto.UploadDirInfo, error) {
+	var uplDirInfo *pkgproto.UploadDirInfo
+	err := json.Unmarshal([]byte(filesInfo), &uplDirInfo)
+	if err != nil {
+		return nil, err
+	}
+	return uplDirInfo, nil
 }
 
 // getPackageInfoVersion read the project.toml file and return the current version.

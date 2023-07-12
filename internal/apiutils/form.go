@@ -67,7 +67,6 @@ func (f *NewApiForm) getResponse(resp *http.Response) (*baseproto.BaseResponse, 
 	if err != nil {
 		return nil, nil, err
 	}
-
 	// get base response(json)
 	if mt == "text/plain" {
 		all, err := io.ReadAll(resp.Body)
