@@ -18,7 +18,7 @@ var fieldInfo = map[string]string{
 }
 
 type InfoCommand struct {
-	Info      string `short:"info" long:"info" block:"1"`
+	Info      string `short:"inf" long:"info" block:"1"`
 	Path      string `short:"p" long:"path"`
 	Package   string `short:"pkg" long:"package"`
 	isInfo    bool

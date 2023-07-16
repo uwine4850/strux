@@ -4,12 +4,21 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Added the ability to delete a user.">
+    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Added the ability to download the package. Fixed some bugs.">
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/eng/create_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/eng/info_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/eng/init_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/eng/pkg_manager_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/eng/user_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ua/create_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ua/info_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ua/init_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ua/pkg_manager_comm.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ua/readme_ua.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ua/user_comm.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/apiutils/form.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/apiutils/form.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/commands/pkg_manager_comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/pkg_manager_comm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commands/info_strux_comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/info_strux_comm.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +36,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="2Qk4S2VPBhyf2A9sweFGEdqpZOQ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -42,7 +54,7 @@
     &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/uwine/Documents/GolandProjects/strux&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/uwine/Documents/GolandProjects/strux/docs/eng&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
@@ -50,6 +62,9 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docs/eng" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/cmd/strux" />
@@ -113,7 +128,8 @@
     <MESSAGE value="Added a function to create a new user." />
     <MESSAGE value="Password update function" />
     <MESSAGE value="Added the ability to delete a user." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added the ability to delete a user." />
+    <MESSAGE value="Added the ability to download the package. Fixed some bugs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the ability to download the package. Fixed some bugs." />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
