@@ -4,21 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Added the ability to download the package. Fixed some bugs.">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/eng/create_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/eng/info_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/eng/init_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/eng/pkg_manager_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/eng/user_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/ua/create_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/ua/info_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/ua/init_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/ua/pkg_manager_comm.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/ua/readme_ua.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/ua/user_comm.md" afterDir="false" />
+    <list default="true" id="835ef4c3-e461-4761-9af9-b71ee69599e2" name="Changes" comment="Adding documentation.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/commands/info_strux_comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/info_strux_comm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,23 +32,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/uwine/Documents/GolandProjects/strux/docs/eng&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "last_opened_file_path": "/home/uwine/Documents/GolandProjects/strux_api",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/docs/eng" />
@@ -129,7 +117,8 @@
     <MESSAGE value="Password update function" />
     <MESSAGE value="Added the ability to delete a user." />
     <MESSAGE value="Added the ability to download the package. Fixed some bugs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added the ability to download the package. Fixed some bugs." />
+    <MESSAGE value="Adding documentation." />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding documentation." />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

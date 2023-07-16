@@ -1,7 +1,7 @@
 ## <p style="text-align: center;">Strux</p>
 Strux is a console client for the [api server](https://github.com/uwine4850/strux_api).
 
-Документація на [українській](https://github.com/uwine4850/strux/blob/master/docs/eng/readme_ua.md).
+Документація [українською](https://github.com/uwine4850/strux/blob/master/docs/ua/readme_ua.md).
 
 ## Groups of commands
 * [Initialization commands](https://github.com/uwine4850/strux/blob/master/docs/eng/init_comm.md)
